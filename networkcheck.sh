@@ -1,0 +1,47 @@
+#!/bin/bash
+sysctl -w net.ipv4.conf.all.send_redirects=0
+sysctl -w net.ipv4.conf.default.send_redirects=0
+sysctl -w net.ipv6.conf.all.send_redirects=0
+sysctl -w net.ipv6.conf.default.send_redirects=0
+sed -i '/send_redirects/ c net.ipv4.conf.all.send_redirects = 1' /etc/sysctl.conf
+echo  'net.ipv4.conf.default.send_redirects= 0' >> /etc/sysctl.conf
+sed -i '/send_redirects/ c net.ipv4.conf.all.send_redirects = 1' /etc/sysctl.conf
+echo  'net.ipv4.conf.default.send_redirects= 0' >> /etc/sysctl.conf
+sed -i '/ip_forward/ c net.ipv4.ip_forward = 0' /etc/sysctl.conf
+sed -i '/all.forwarding/ c net.ipv6.conf.all.forwarding = 0' /etc/sysctl.conf
+grep -Els "^\s*net\.ipv4\.ip_forward\s*=\s*1" /etc/sysctl.conf /etc/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /run/sysctl.d/*.conf | while read filename; do sed -ri "s/^\s*(net\.ipv4\.ip_forward\s*)(=)(\s*\S+\b).*$/# *REMOVED* \1/" $filename; done; sysctl -w net.ipv4.ip_forward=0; sysctl -w net.ipv4.route.flush=1
+grep -Els "^\s*net\.ipv6\.conf\.all\.forwarding\s*=\s*1" /etc/sysctl.conf /etc/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /run/sysctl.d/*.conf | while read filename; do sed -ri "s/^\s*(net\.ipv6\.conf\.all\.forwarding\s*)(=)(\s*\S+\b).*$/# *REMOVED* \1/" $filename; done; sysctl -w net.ipv6.conf.all.forwarding=0; sysctl -w net.ipv6.route.flush=1
+sed -i '/ipv4.*.accept_source_route/ c net.ipv4.conf.all.accept_source_route = 0' /etc/sysctl.conf
+sed -i '/ipv6.*.accept_source_route/ c net.ipv6.conf.all.accept_source_route = 0' /etc/sysctl.conf
+echo 'net.ipv4.conf.default.accept_source_route = 0' >> /etc/sysctl.conf
+echo 'net.ipv6.conf.default.accept_source_route = 0' >> /etc/sysctl.conf 
+sysctl -w net.ipv4.conf.all.accept_source_route=0 
+sysctl -w net.ipv4.conf.default.accept_source_route=0
+sysctl -w net.ipv6.conf.all.accept_source_route=0
+sysctl -w net.ipv6.conf.default.accept_source_route=0 
+sysctl -w net.ipv4.route.flush=1
+sysctl -w net.ipv6.route.flush=1
+sed -i '/log_martians/ c net.ipv4.conf.all.log_martians = 1' /etc/sysctl.conf
+echo 'net.ipv4.conf.default.log_martians = 1' >> /etc/sysctl.conf
+sysctl -w net.ipv4.conf.all.log_martians=1
+sysctl -w net.ipv4.conf.default.log_martians=1
+sysctl -w net.ipv4.route.flush=1
+echo 'net.ipv4.icmp_echo_ignore_broadcasts = 1' >> /etc/sysctl.conf
+sysctl -w net.ipv4.icmp_echo_ignore_broadcasts=1
+sysctl -w net.ipv4.route.flush=1
+echo 'net.ipv4.icmp_ignore_bogus_error_responses = 1' >> /etc/sysctl.conf
+sysctl -w net.ipv4.icmp_ignore_bogus_error_responses=1
+sysctl -w net.ipv4.route.flush=1
+sed -i '/all.rp_filter/ c net.ipv4.conf.all.rp_filter = 1' /etc/sysctl.conf
+sed -i '/default.rp_filter/ c net.ipv4.conf.default.rp_filter = 1' /etc/sysctl.conf
+sysctl -w net.ipv4.conf.all.rp_filter=1
+sysctl -w net.ipv4.conf.default.rp_filter=1
+sysctl -w net.ipv4.route.flush=1
+sed -i '/tcp_syncookies/ c net.ipv4.tcp_syncookies = 1' /etc/sysctl.conf
+sysctl -w net.ipv4.tcp_syncookies=1
+sysctl -w net.ipv4.route.flush=1
+echo 'net.ipv6.conf.all.accept_ra = 0' >> /etc/sysctl.conf
+echo 'net.ipv6.conf.default.accept_ra = 0' >> /etc/sysctl.conf
+sysctl -w net.ipv6.conf.all.accept_ra=0
+sysctl -w net.ipv6.conf.default.accept_ra=0
+sysctl -w net.ipv6.route.flush=1
